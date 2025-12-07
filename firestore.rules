@@ -6,11 +6,28 @@ service cloud.firestore {
       allow create: if request.auth != null
         && request.resource.data.photoUrl is string
         && request.resource.data.photoUrl.size() < 1048576; // 1MB limit for base64 images
-      allow update, delete: if request.auth != null && request.auth.uid == resource.data.userId;
+      
+      // Allow owner to update/delete their pothole
+      allow delete: if request.auth != null && request.auth.uid == resource.data.userId;
+      
+      // Allow any authenticated user to upvote (update upvotes and upvotedBy fields)
+      // Owner can also update their own pothole fully
+      allow update: if request.auth != null && (
+        // Owner can update anything
+        request.auth.uid == resource.data.userId ||
+        // Any authenticated user can update only upvote-related fields
+        (
+          request.resource.data.diff(resource.data).affectedKeys().hasOnly(['upvotes', 'upvotedBy', 'updatedAt'])
+        )
+      );
     }
     match /users/{userId} {
       allow read: if true;
+      // Allow user to update their own profile
       allow write: if request.auth != null && request.auth.uid == userId;
+      // Allow any authenticated user to increment upvotesReceived (for leaderboard)
+      allow update: if request.auth != null &&
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['upvotesReceived']);
     }
   }
 }

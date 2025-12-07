@@ -20,6 +20,9 @@ interface AuthState {
   error: string | null;
 }
 
+// Generate a privacy-friendly username suggestion
+const generateRandomUsername = () => `boricua-${Math.random().toString(36).slice(2, 8)}`;
+
 export function useAuth() {
   const [state, setState] = useState<AuthState>({
     user: null,
@@ -38,10 +41,11 @@ export function useAuth() {
         return { id: userSnap.id, ...userSnap.data() } as UserProfile;
       }
 
-      // Create new profile
+      // Create new profile with a random, editable username to avoid exposing real names
+      const safeDisplayName = generateRandomUsername();
       const newProfile = {
         email: firebaseUser.email || '',
-        displayName: firebaseUser.displayName || firebaseUser.email?.split('@')[0] || 'Usuario',
+        displayName: safeDisplayName,
         photoUrl: firebaseUser.photoURL || null,
         reportsCount: 0,
         upvotesReceived: 0,
@@ -136,6 +140,33 @@ export function useAuth() {
     }
   }, []);
 
+  // Allow user to edit their display name anytime
+  const updateDisplayName = useCallback(
+    async (displayName: string) => {
+      if (!state.firebaseUser) throw new Error('No hay usuario autenticado');
+
+      const userRef = doc(db, 'users', state.firebaseUser.uid);
+      await setDoc(
+        userRef,
+        {
+          displayName,
+          updatedAt: serverTimestamp(),
+        },
+        { merge: true }
+      );
+
+      setState((prev) =>
+        prev
+          ? {
+              ...prev,
+              user: prev.user ? { ...prev.user, displayName } : null,
+            }
+          : prev
+      );
+    },
+    [state.firebaseUser]
+  );
+
   return {
     ...state,
     signIn,
@@ -143,6 +174,7 @@ export function useAuth() {
     signInWithGoogle,
     signOut,
     resetPassword,
+    updateDisplayName,
     isAuthenticated: !!state.firebaseUser,
   };
 }

@@ -93,14 +93,14 @@ export default function DetailPage() {
     <div className="min-h-screen bg-dark-950 pb-24">
       <Header showBack transparent />
 
-      {/* Photo */}
-      <div className="relative h-72">
+      {/* Photo - Full image display for phone-ratio photos */}
+      <div className="relative w-full bg-dark-900">
         <img
           src={pothole.photoUrl}
           alt="Pothole"
-          className="w-full h-full object-cover"
+          className="w-full max-h-[70vh] object-contain"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-dark-950 via-dark-950/20 to-transparent" />
+        <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-dark-950 to-transparent" />
         
         {/* Badges overlay */}
         <div className="absolute bottom-4 left-4 flex gap-2">

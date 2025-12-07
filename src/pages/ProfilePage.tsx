@@ -1,17 +1,19 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { LogOut, ThumbsUp, MapPin, ChevronRight, Settings, Info } from 'lucide-react';
 import { Header } from '../components/layout';
 import { PotholeCard } from '../components/pothole';
-import { Button, Card, Spinner, PotholeCardSkeleton } from '../components/ui';
+import { Button, Card, Spinner, PotholeCardSkeleton, Input } from '../components/ui';
 import { useAuth, usePotholes } from '../hooks';
 import { useStore } from '../store/useStore';
 
 export default function ProfilePage() {
   const navigate = useNavigate();
-  const { user, isAuthenticated, loading: authLoading, signOut } = useAuth();
+  const { user, isAuthenticated, loading: authLoading, signOut, updateDisplayName } = useAuth();
   const { addToast } = useStore();
   const [showMyPotholes, setShowMyPotholes] = useState(false);
+  const [displayName, setDisplayName] = useState(user?.displayName || '');
+  const [savingName, setSavingName] = useState(false);
 
   // Fetch user's potholes
   const { potholes, loading: potholesLoading } = usePotholes({ limitCount: 50 });
@@ -23,6 +25,27 @@ export default function ProfilePage() {
       addToast({ type: 'success', message: '¡Hasta pronto!' });
     } catch (err) {
       addToast({ type: 'error', message: 'Error al cerrar sesión' });
+    }
+  };
+
+  useEffect(() => {
+    setDisplayName(user?.displayName || '');
+  }, [user?.displayName]);
+
+  const handleSaveDisplayName = async () => {
+    const trimmed = displayName.trim();
+    if (trimmed.length < 3) {
+      addToast({ type: 'error', message: 'El usuario debe tener al menos 3 caracteres' });
+      return;
+    }
+    try {
+      setSavingName(true);
+      await updateDisplayName(trimmed);
+      addToast({ type: 'success', message: 'Nombre actualizado' });
+    } catch (err) {
+      addToast({ type: 'error', message: 'No pudimos actualizar tu usuario' });
+    } finally {
+      setSavingName(false);
     }
   };
 
@@ -110,6 +133,27 @@ export default function ProfilePage() {
               </h2>
               <p className="text-sm text-dark-400 truncate">{user.email}</p>
             </div>
+          </div>
+
+          {/* Editable username */}
+          <div className="mt-4 space-y-2">
+            <Input
+              label="Usuario público"
+              value={displayName}
+              onChange={(e) => setDisplayName(e.target.value)}
+              maxLength={30}
+            />
+            <p className="text-xs text-dark-400">
+              Sugerimos un usuario aleatorio para proteger tu nombre. Puedes editarlo cuando quieras.
+            </p>
+            <Button
+              onClick={handleSaveDisplayName}
+              loading={savingName}
+              variant="secondary"
+              className="w-full"
+            >
+              Guardar usuario
+            </Button>
           </div>
 
           {/* Stats */}
