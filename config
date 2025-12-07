@@ -1,0 +1,21 @@
+// Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+import { getAnalytics } from "firebase/analytics";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+  apiKey: "AIzaSyDD2vw6C8YEPiFrN_BByQJibgQmxrWGDzA",
+  authDomain: "pothole-app-3ee2a.firebaseapp.com",
+  projectId: "pothole-app-3ee2a",
+  storageBucket: "pothole-app-3ee2a.firebasestorage.app",
+  messagingSenderId: "299928282046",
+  appId: "1:299928282046:web:c2cb3259bb87db2f30cfef",
+  measurementId: "G-73YW3RZ0YN"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);

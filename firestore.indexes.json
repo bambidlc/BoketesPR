@@ -1,0 +1,33 @@
+{
+  "indexes": [
+    {
+      "collectionGroup": "potholes",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "location.geohash",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "createdAt",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "potholes",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "status",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "createdAt",
+          "order": "DESCENDING"
+        }
+      ]
+    }
+  ],
+  "fieldOverrides": []
+}
