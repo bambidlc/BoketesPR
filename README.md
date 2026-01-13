@@ -2,7 +2,8 @@
 
 A mobile-first web application for reporting and tracking boketes across Puerto Rico. Built with React, TypeScript, Firebase, and Mapbox.
 
-![BoketesPR Screenshot](https://via.placeholder.com/800x400?text=BoketesPR+Screenshot)
+<img width="1917" height="864" alt="image" src="https://github.com/user-attachments/assets/94670571-7a1e-45c7-be73-e5ef64765e02" />
+
 
 ## ✨ Features
 
